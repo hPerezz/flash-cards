@@ -1,188 +1,397 @@
 {
-    "banks": [
-      {
-        "id": 1,
-        "name": "Conversão de Bases (Binário, Decimal, Hexadecimal)",
-        "questions": [
-          {
-            "id": 1,
-            "question": "Converta o número binário 1010 para decimal.",
-            "correct_answer": "10",
-            "wrong_answers": ["12", "8", "20"]
-          },
-          {
+  "banks": [
+    {
+      "id": 1,
+      "name": "Conversão de Bases (Binário, Decimal, Hexadecimal)",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Converta o número binário 1010 para decimal.",
+          "correct_answer": "10",
+          "wrong_answers": ["12", "8", "20"]
+        },
+        {
+          "id": 2,
+          "question": "Converta o número binário 1001 para decimal.",
+          "correct_answer": "9",
+          "wrong_answers": ["11", "7", "13"]
+        },
+        {
+          "id": 3,
+          "question": "Converta o número binário 1111 para decimal.",
+          "correct_answer": "15",
+          "wrong_answers": ["16", "14", "30"]
+        },
+        {
+          "id": 4,
+          "question": "Qual é o valor decimal do binário 1100?",
+          "correct_answer": "12",
+          "wrong_answers": ["6", "14", "24"]
+        },
+        {
+          "id": 5,
+          "question": "O número binário 10101 corresponde a qual decimal?",
+          "correct_answer": "21",
+          "wrong_answers": ["19", "25", "42"]
+        },
+        {
+          "id": 6,
+          "question": "Converta o número decimal 5 para binário.",
+          "correct_answer": "101",
+          "wrong_answers": ["110", "111", "011"]
+        },
+        {
+          "id": 7,
+          "question": "Converta o número decimal 13 para binário.",
+          "correct_answer": "1101",
+          "wrong_answers": ["1011", "1110", "1001"]
+        },
+        {
+          "id": 8,
+          "question": "Como se escreve o decimal 27 em binário?",
+          "correct_answer": "11011",
+          "wrong_answers": ["11101", "10111", "11111"]
+        },
+        {
+          "id": 9,
+          "question": "Converta o decimal 50 para binário.",
+          "correct_answer": "110010",
+          "wrong_answers": ["101010", "110100", "011001"]
+        },
+        {
+          "id": 10,
+          "question": "Qual a representação binária do decimal 64?",
+          "correct_answer": "1000000",
+          "wrong_answers": ["111111", "100000", "1010101"]
+        },
+        {
+          "id": 11,
+          "question": "Converta o hexadecimal A para decimal.",
+          "correct_answer": "10",
+          "wrong_answers": ["11", "1", "100"]
+        },
+        {
+          "id": 12,
+          "question": "Qual o valor decimal do hexadecimal 1F?",
+          "correct_answer": "31",
+          "wrong_answers": ["15", "32", "16"]
+        },
+        {
+          "id": 13,
+          "question": "Converta o hexadecimal FF para decimal.",
+          "correct_answer": "255",
+          "wrong_answers": ["256", "100", "128"]
+        },
+        {
+          "id": 14,
+          "question": "O número hexadecimal 2C equivale a qual decimal?",
+          "correct_answer": "44",
+          "wrong_answers": ["42", "34", "56"]
+        },
+        {
+          "id": 15,
+          "question": "Converta o hexadecimal B5 para decimal.",
+          "correct_answer": "181",
+          "wrong_answers": ["175", "115", "191"]
+        },
+        {
+          "id": 16,
+          "question": "Converta o decimal 15 para hexadecimal.",
+          "correct_answer": "F",
+          "wrong_answers": ["E", "10", "A5"]
+        },
+        {
+          "id": 17,
+          "question": "Qual é o valor hexadecimal do decimal 32?",
+          "correct_answer": "20",
+          "wrong_answers": ["22", "1F", "32"]
+        },
+        {
+          "id": 18,
+          "question": "Converta o decimal 128 para hexadecimal.",
+          "correct_answer": "80",
+          "wrong_answers": ["100", "7F", "88"]
+        },
+        {
+          "id": 19,
+          "question": "Converta o decimal 254 para hexadecimal.",
+          "correct_answer": "FE",
+          "wrong_answers": ["FF", "FD", "E1"]
+        },
+        {
+          "id": 20,
+          "question": "O decimal 100 é representado em hexadecimal como:",
+          "correct_answer": "64",
+          "wrong_answers": ["A0", "50", "66"]
+        },
+        {
+          "id": 21,
+          "question": "Converta o binário 1111 para hexadecimal.",
+          "correct_answer": "F",
+          "wrong_answers": ["E", "11", "15"]
+        },
+        {
+          "id": 22,
+          "question": "Converta o binário 1010 para hexadecimal.",
+          "correct_answer": "A",
+          "wrong_answers": ["B", "10", "C"]
+        },
+        {
+          "id": 23,
+          "question": "Qual é o valor hexadecimal do binário 11011?",
+          "correct_answer": "1B",
+          "wrong_answers": ["1A", "2B", "B1"]
+        },
+        {
+          "id": 24,
+          "question": "O binário 100000 corresponde a qual hexadecimal?",
+          "correct_answer": "20",
+          "wrong_answers": ["10", "40", "30"]
+        },
+        {
+          "id": 25,
+          "question": "Converta o binário 11111111 para hexadecimal.",
+          "correct_answer": "FF",
+          "wrong_answers": ["100", "EE", "F8"]
+        },
+        {
+          "id": 26,
+          "question": "Converta o hexadecimal 7 para binário.",
+          "correct_answer": "111",
+          "wrong_answers": ["101", "110", "011"]
+        },
+        {
+          "id": 27,
+          "question": "Converta o hexadecimal C para binário.",
+          "correct_answer": "1100",
+          "wrong_answers": ["1011", "1101", "1110"]
+        },
+        {
+          "id": 28,
+          "question": "Qual a representação binária do hexadecimal 10?",
+          "correct_answer": "10000",
+          "wrong_answers": ["10", "1010", "1000"]
+        },
+        {
+          "id": 29,
+          "question": "Converta o hexadecimal A5 para binário.",
+          "correct_answer": "10100101",
+          "wrong_answers": ["10101010", "11000101", "10100111"]
+        },
+        {
+          "id": 30,
+          "question": "O hexadecimal 2F corresponde a qual binário?",
+          "correct_answer": "101111",
+          "wrong_answers": ["100111", "110111", "011111"]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "STM32F103C8",
+      "questions": [
+        {
+          "id": 1,
+          "question": "No STM32, que registradores precisamos sempre iniciar carregando em equ?",
+          "correct_answer": "RCC_BASE e RCC_APBXENR",
+          "wrong_answers": [
+            "RCC_CR e RCC_CFGR",
+            "RCC_APB2RSTR e RCC_APB1RSTR",
+            "RCC_AHBENR e RCC_BDCR"
+          ]
+        },
+        {
             "id": 2,
-            "question": "Converta o número binário 1001 para decimal.",
-            "correct_answer": "9",
-            "wrong_answers": ["11", "7", "13"]
+            "question": "O que preciso inicializar em todo código que usa GPIOs no STM32?",
+            "correct_answer": "GPIOx_BASE, GPIOx_CRL/CRH e GPIOx_ODR/IDR",
+            "wrong_answers": [
+              "GPIOx_BSRR e GPIOx_BRR",
+              "GPIOx_LCKR e GPIOx_IDR",
+              "Somente GPIOx_CRL"
+            ]
           },
           {
             "id": 3,
-            "question": "Converta o número binário 1111 para decimal.",
-            "correct_answer": "15",
-            "wrong_answers": ["16", "14", "30"]
+            "question": "Como faço para habilitar um GPIO como saída no STM32?",
+            "correct_answer": "Configurar o bit correspondente no registrador GPIOx_CRL ou GPIOx_CRH e setar o bit de saída no registrador GPIOx_ODR",
+            "wrong_answers": [
+              "Configurar o bit correspondente no registrador GPIOx_CRL ou GPIOx_CRH e setar o bit de entrada no registrador GPIOx_IDR",
+              "Configurar o bit correspondente no registrador GPIOx_CRL ou GPIOx_CRH e setar o bit de saída no registrador GPIOx_BSRR",
+              "Configurar o bit correspondente no registrador GPIOx_CRL ou GPIOx_CRH e setar o bit de saída no registrador GPIOx_BRR"
+            ]
           },
           {
             "id": 4,
-            "question": "Qual é o valor decimal do binário 1100?",
-            "correct_answer": "12",
-            "wrong_answers": ["6", "14", "24"]
+            "question": "Como faço para ler o valor de um GPIO no STM32?",
+            "correct_answer": "Ler o bit correspondente no registrador GPIOx_IDR",
+            "wrong_answers": [
+              "Ler o bit correspondente no registrador GPIOx_ODR",
+              "Ler o bit correspondente no registrador GPIOx_BSRR",
+              "Ler o bit correspondente no registrador GPIOx_BRR"
+            ]
           },
           {
-            "id": 5,
-            "question": "O número binário 10101 corresponde a qual decimal?",
-            "correct_answer": "21",
-            "wrong_answers": ["19", "25", "42"]
+            "id": 5, 
+            "question": "O que o registrador GPIOx_CRH faz?",
+            "correct_answer": "Configura o modo de operação do GPIO (entrada, saída, analógico, etc.)",
+            "wrong_answers": [
+              "Configura a velocidade do GPIO",
+              "Configura o pull-up/pull-down do GPIO",
+              "Configura o interrupt enable do GPIO"
+            ]
           },
+            {
+              "id": 6,
+              "question": "Qual registrador precisa ser habilitado antes de usar qualquer GPIO no STM32?",
+              "correct_answer": "RCC_APB2ENR",
+              "wrong_answers": ["RCC_CIR", "TIM2_SR", "GPIOB_ODR"]
+            },
+            {
+              "id": 7,
+              "question": "Qual é a base address usada para acessar os registradores do GPIOB?",
+              "correct_answer": "GPIOB_BASE",
+              "wrong_answers": ["GPIOC_BASE", "RCC_BASE", "TIM2_BASE"]
+            },
+            {
+              "id": 8,
+              "question": "Qual registrador configura os pinos do GPIOB na faixa dos pinos 8 a 15?",
+              "correct_answer": "GPIOB_CRH",
+              "wrong_answers": ["GPIOB_CRL", "GPIOB_ODR", "GPIOB_IDR"]
+            },
+            {
+              "id": 9,
+              "question": "Qual registrador é lido para verificar o estado lógico de um pino configurado como entrada?",
+              "correct_answer": "GPIOB_IDR",
+              "wrong_answers": ["GPIOB_ODR", "GPIOB_BSRR", "GPIOB_CRH"]
+            },
+            {
+              "id": 10,
+              "question": "Qual registrador controla o estado da saída digital do GPIOC?",
+              "correct_answer": "GPIOC_ODR",
+              "wrong_answers": ["GPIOC_IDR", "GPIOC_CRL", "GPIOC_CRH"]
+            },
+            {
+                "id": 11,
+                "question": "Qual configuração corresponde ao modo Floating Input no GPIO?",
+                "correct_answer": "0100 (hex 4)",
+                "wrong_answers": ["0010 (hex 2)", "0110 (hex 6)", "1110 (hex E)"]
+              },
+              {
+                "id": 12,
+                "question": "Qual configuração corresponde ao modo Output Push-Pull?",
+                "correct_answer": "0010 (hex 2)",
+                "wrong_answers": ["0100 (hex 4)", "1010 (hex A)", "1110 (hex E)"]
+              },
+              {
+                "id": 13,
+                "question": "Qual é o valor correto para configurar o GPIO em Output Open-Drain?",
+                "correct_answer": "0110 (hex 6)",
+                "wrong_answers": ["0010 (hex 2)", "1010 (hex A)", "1110 (hex E)"]
+              },
+              {
+                "id": 14,
+                "question": "Qual configuração representa Alternate Function Push-Pull?",
+                "correct_answer": "1010 (hex A)",
+                "wrong_answers": ["0110 (hex 6)", "1110 (hex E)", "0100 (hex 4)"]
+              }
+
+          ]
+      },
+
+    {
+      "id": 3,
+      "name": "TIM2",
+      "questions": [
+          { 
+            "id": 1,
+            "question": "O que o TIM2_CR1 faz?",
+            "correct_answer": "Inicia o timer",
+            "wrong_answers": [
+              "Para o timer",
+              "Reseta o timer",
+              "Configura o prescaler do timer"
+            ]
+          },
+          {
+            "id": 2,
+            "question": "Como inicio o timer TIM2?",
+            "correct_answer": "ORR com o bit 0 (ORR 0x1)",
+            "wrong_answers": [
+              "AND com o bit 0 (AND 0x1)",
+              "XOR com o bit 0 (XOR 0x1)",
+              "NOT com o bit 0 (NOT 0x1)"
+            ]
+          }, 
+          {
+            "id": 3,
+            "question": "Como faço para fazer um loop em um timer?",
+            "correct_answer": "Carrega o TIM_SR, faz um ANDS 0x1, e BEQ pk0. Se bater o tempo, ele passa, zera a flag com EOR 0x1 e STRH.",
+            "wrong_answers": [
+              "Carrega o TIM2_CR1, faz um ORR 0x1, e BEQ pk0. Se bater o tempo, ele passa, zera a flag com ORR 0x200s.",
+              "Carrega o TIM2_PSC, faz um EOR 0x1, e BEQ pk0. Se bater o tempo, ele passa, zera a flag com ORR 0x1.",
+              "Carrega o TIM2_ARR, faz um AND 0x1, e BEQ pk0. Se bater o tempo, ele passa, zera a flag com AND 0x1."
+            ]
+          },
+          {
+            "id": 4,
+            "question": "Como faço para configurar o prescaler do TIM2?",
+            "correct_answer": "Configurar o bit correspondente no registrador TIM2_PSC",
+            "wrong_answers": [
+              "Configurar o bit correspondente no registrador TIM2_CR1",
+              "Configurar o bit correspondente no registrador TIM2_ARR",
+              "Configurar o bit correspondente no registrador TIM2_CNT"
+            ]
+          }, 
+          {
+            "id": 5, 
+            "question": "O que o TIM2_PSC faz?",
+            "correct_answer": "Configura o prescaler do timer",
+            "wrong_answers": [
+              "Configura o modo de operação do timer",
+              "Configura o contador do timer",
+              "Configura o valor do timer"
+            ]
+          }, 
           {
             "id": 6,
-            "question": "Converta o número decimal 5 para binário.",
-            "correct_answer": "101",
-            "wrong_answers": ["110", "111", "011"]
+            "question": "O que o TIM2_SR faz?",
+            "correct_answer": "Indica o status do timer (overflow, etc.)",
+            "wrong_answers": [
+              "Indica o contador do timer",
+              "Indica o prescaler do timer",
+              "Indica o valor do timer "
+            ]
           },
           {
             "id": 7,
-            "question": "Converta o número decimal 13 para binário.",
-            "correct_answer": "1101",
-            "wrong_answers": ["1011", "1110", "1001"]
-          },
-          {
+            "question": "O que o TIM2_ARR faz?",
+            "correct_answer": "Indica o valor de ciclos -1 (valor maximo) do timer",
+            "wrong_answers": [
+              "Indica o valor de ciclos (valor maximo) do timer",
+              "Indica o valor de ciclos +1 (valor maximo) do timer",
+              "Indica o valor de ciclos -2 (valor maximo) do timer"
+            ]
+          }, 
+          { 
             "id": 8,
-            "question": "Como se escreve o decimal 27 em binário?",
-            "correct_answer": "11011",
-            "wrong_answers": ["11101", "10111", "11111"]
+            "question": "Como chegar no valor de PSC a partir do valor de ARR?",
+            "correct_answer": "PSC = tempo / [(ARR + 1) * 0,125us] – 1",
+            "wrong_answers": [
+              "PSC = tempo / [(ARR + 1) * 0,125us]",
+              "PSC = tempo / [(ARR + 1) * 0,125us] + 4",
+              "PSC = tempo / [(ARR + 1) * 0,125us] - 1"
+            ]
           },
+
           {
             "id": 9,
-            "question": "Converta o decimal 50 para binário.",
-            "correct_answer": "110010",
-            "wrong_answers": ["101010", "110100", "011001"]
-          },
-          {
-            "id": 10,
-            "question": "Qual a representação binária do decimal 64?",
-            "correct_answer": "1000000",
-            "wrong_answers": ["111111", "100000", "1010101"]
-          },
-          {
-            "id": 11,
-            "question": "Converta o hexadecimal A para decimal.",
-            "correct_answer": "10",
-            "wrong_answers": ["11", "1", "100"]
-          },
-          {
-            "id": 12,
-            "question": "Qual o valor decimal do hexadecimal 1F?",
-            "correct_answer": "31",
-            "wrong_answers": ["15", "32", "16"]
-          },
-          {
-            "id": 13,
-            "question": "Converta o hexadecimal FF para decimal.",
-            "correct_answer": "255",
-            "wrong_answers": ["256", "100", "128"]
-          },
-          {
-            "id": 14,
-            "question": "O número hexadecimal 2C equivale a qual decimal?",
-            "correct_answer": "44",
-            "wrong_answers": ["42", "34", "56"]
-          },
-          {
-            "id": 15,
-            "question": "Converta o hexadecimal B5 para decimal.",
-            "correct_answer": "181",
-            "wrong_answers": ["175", "115", "191"]
-          },
-          {
-            "id": 16,
-            "question": "Converta o decimal 15 para hexadecimal.",
-            "correct_answer": "F",
-            "wrong_answers": ["E", "10", "A5"]
-          },
-          {
-            "id": 17,
-            "question": "Qual é o valor hexadecimal do decimal 32?",
-            "correct_answer": "20",
-            "wrong_answers": ["22", "1F", "32"]
-          },
-          {
-            "id": 18,
-            "question": "Converta o decimal 128 para hexadecimal.",
-            "correct_answer": "80",
-            "wrong_answers": ["100", "7F", "88"]
-          },
-          {
-            "id": 19,
-            "question": "Converta o decimal 254 para hexadecimal.",
-            "correct_answer": "FE",
-            "wrong_answers": ["FF", "FD", "E1"]
-          },
-          {
-            "id": 20,
-            "question": "O decimal 100 é representado em hexadecimal como:",
-            "correct_answer": "64",
-            "wrong_answers": ["A0", "50", "66"]
-          },
-          {
-            "id": 21,
-            "question": "Converta o binário 1111 para hexadecimal.",
-            "correct_answer": "F",
-            "wrong_answers": ["E", "11", "15"]
-          },
-          {
-            "id": 22,
-            "question": "Converta o binário 1010 para hexadecimal.",
-            "correct_answer": "A",
-            "wrong_answers": ["B", "10", "C"]
-          },
-          {
-            "id": 23,
-            "question": "Qual é o valor hexadecimal do binário 11011?",
-            "correct_answer": "1B",
-            "wrong_answers": ["1A", "2B", "B1"]
-          },
-          {
-            "id": 24,
-            "question": "O binário 100000 corresponde a qual hexadecimal?",
-            "correct_answer": "20",
-            "wrong_answers": ["10", "40", "30"]
-          },
-          {
-            "id": 25,
-            "question": "Converta o binário 11111111 para hexadecimal.",
-            "correct_answer": "FF",
-            "wrong_answers": ["100", "EE", "F8"]
-          },
-          {
-            "id": 26,
-            "question": "Converta o hexadecimal 7 para binário.",
-            "correct_answer": "111",
-            "wrong_answers": ["101", "110", "011"]
-          },
-          {
-            "id": 27,
-            "question": "Converta o hexadecimal C para binário.",
-            "correct_answer": "1100",
-            "wrong_answers": ["1011", "1101", "1110"]
-          },
-          {
-            "id": 28,
-            "question": "Qual a representação binária do hexadecimal 10?",
-            "correct_answer": "10000",
-            "wrong_answers": ["10", "1010", "1000"]
-          },
-          {
-            "id": 29,
-            "question": "Converta o hexadecimal A5 para binário.",
-            "correct_answer": "10100101",
-            "wrong_answers": ["10101010", "11000101", "10100111"]
-          },
-          {
-            "id": 30,
-            "question": "O hexadecimal 2F corresponde a qual binário?",
-            "correct_answer": "101111",
-            "wrong_answers": ["100111", "110111", "011111"]
+            "question": "Qual é o workflow completo do TIM2 no STM32?",
+            "correct_answer": "1) Inicializar espaços de memória (EQU): RCC_BASE, RCC_APB1ENR, TIM2_BASE, TIM2_CR1, TIM2_SR, TIM2_PSC, TIM2_ARR. 2) Ativar clock via RCC_APB1ENR (bit 0 = TIM2EN). 3) Configurar TIM2_ARR (valor máximo - 1). 4) Configurar TIM2_PSC (prescaler). 5) Ativar timer via TIM2_CR1 (ORR 0x1 no bit 0). 6) Loop: ler TIM2_SR, verificar bit 0 (UIF), limpar flag quando setado.",
+            "wrong_answers": [
+              "1) Configurar TIM2_ARR. 2) Configurar TIM2_PSC. 3) Ativar via TIM2_CR1. Não precisa ativar clock nem verificar flags.",
+              "1) Ativar clock via RCC_APB2ENR. 2) Configurar TIM2_ARR e TIM2_PSC simultaneamente. 3) Ativar timer. 4) Ler TIM2_CNT para verificar overflow.",
+              "1) Inicializar apenas TIM2_BASE. 2) Configurar TIM2_CR1 diretamente sem ativar clock. 3) Ler TIM2_PSC para verificar status do timer."
+            ]
           }
         ]
       }
