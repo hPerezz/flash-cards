@@ -1,0 +1,190 @@
+{
+    "banks": [
+      {
+        "id": 1,
+        "name": "Conversão de Bases (Binário, Decimal, Hexadecimal)",
+        "questions": [
+          {
+            "id": 1,
+            "question": "Converta o número binário 1010 para decimal.",
+            "correct_answer": "10",
+            "wrong_answers": ["12", "8", "20"]
+          },
+          {
+            "id": 2,
+            "question": "Converta o número binário 1001 para decimal.",
+            "correct_answer": "9",
+            "wrong_answers": ["11", "7", "13"]
+          },
+          {
+            "id": 3,
+            "question": "Converta o número binário 1111 para decimal.",
+            "correct_answer": "15",
+            "wrong_answers": ["16", "14", "30"]
+          },
+          {
+            "id": 4,
+            "question": "Qual é o valor decimal do binário 1100?",
+            "correct_answer": "12",
+            "wrong_answers": ["6", "14", "24"]
+          },
+          {
+            "id": 5,
+            "question": "O número binário 10101 corresponde a qual decimal?",
+            "correct_answer": "21",
+            "wrong_answers": ["19", "25", "42"]
+          },
+          {
+            "id": 6,
+            "question": "Converta o número decimal 5 para binário.",
+            "correct_answer": "101",
+            "wrong_answers": ["110", "111", "011"]
+          },
+          {
+            "id": 7,
+            "question": "Converta o número decimal 13 para binário.",
+            "correct_answer": "1101",
+            "wrong_answers": ["1011", "1110", "1001"]
+          },
+          {
+            "id": 8,
+            "question": "Como se escreve o decimal 27 em binário?",
+            "correct_answer": "11011",
+            "wrong_answers": ["11101", "10111", "11111"]
+          },
+          {
+            "id": 9,
+            "question": "Converta o decimal 50 para binário.",
+            "correct_answer": "110010",
+            "wrong_answers": ["101010", "110100", "011001"]
+          },
+          {
+            "id": 10,
+            "question": "Qual a representação binária do decimal 64?",
+            "correct_answer": "1000000",
+            "wrong_answers": ["111111", "100000", "1010101"]
+          },
+          {
+            "id": 11,
+            "question": "Converta o hexadecimal A para decimal.",
+            "correct_answer": "10",
+            "wrong_answers": ["11", "1", "100"]
+          },
+          {
+            "id": 12,
+            "question": "Qual o valor decimal do hexadecimal 1F?",
+            "correct_answer": "31",
+            "wrong_answers": ["15", "32", "16"]
+          },
+          {
+            "id": 13,
+            "question": "Converta o hexadecimal FF para decimal.",
+            "correct_answer": "255",
+            "wrong_answers": ["256", "100", "128"]
+          },
+          {
+            "id": 14,
+            "question": "O número hexadecimal 2C equivale a qual decimal?",
+            "correct_answer": "44",
+            "wrong_answers": ["42", "34", "56"]
+          },
+          {
+            "id": 15,
+            "question": "Converta o hexadecimal B5 para decimal.",
+            "correct_answer": "181",
+            "wrong_answers": ["175", "115", "191"]
+          },
+          {
+            "id": 16,
+            "question": "Converta o decimal 15 para hexadecimal.",
+            "correct_answer": "F",
+            "wrong_answers": ["E", "10", "A5"]
+          },
+          {
+            "id": 17,
+            "question": "Qual é o valor hexadecimal do decimal 32?",
+            "correct_answer": "20",
+            "wrong_answers": ["22", "1F", "32"]
+          },
+          {
+            "id": 18,
+            "question": "Converta o decimal 128 para hexadecimal.",
+            "correct_answer": "80",
+            "wrong_answers": ["100", "7F", "88"]
+          },
+          {
+            "id": 19,
+            "question": "Converta o decimal 254 para hexadecimal.",
+            "correct_answer": "FE",
+            "wrong_answers": ["FF", "FD", "E1"]
+          },
+          {
+            "id": 20,
+            "question": "O decimal 100 é representado em hexadecimal como:",
+            "correct_answer": "64",
+            "wrong_answers": ["A0", "50", "66"]
+          },
+          {
+            "id": 21,
+            "question": "Converta o binário 1111 para hexadecimal.",
+            "correct_answer": "F",
+            "wrong_answers": ["E", "11", "15"]
+          },
+          {
+            "id": 22,
+            "question": "Converta o binário 1010 para hexadecimal.",
+            "correct_answer": "A",
+            "wrong_answers": ["B", "10", "C"]
+          },
+          {
+            "id": 23,
+            "question": "Qual é o valor hexadecimal do binário 11011?",
+            "correct_answer": "1B",
+            "wrong_answers": ["1A", "2B", "B1"]
+          },
+          {
+            "id": 24,
+            "question": "O binário 100000 corresponde a qual hexadecimal?",
+            "correct_answer": "20",
+            "wrong_answers": ["10", "40", "30"]
+          },
+          {
+            "id": 25,
+            "question": "Converta o binário 11111111 para hexadecimal.",
+            "correct_answer": "FF",
+            "wrong_answers": ["100", "EE", "F8"]
+          },
+          {
+            "id": 26,
+            "question": "Converta o hexadecimal 7 para binário.",
+            "correct_answer": "111",
+            "wrong_answers": ["101", "110", "011"]
+          },
+          {
+            "id": 27,
+            "question": "Converta o hexadecimal C para binário.",
+            "correct_answer": "1100",
+            "wrong_answers": ["1011", "1101", "1110"]
+          },
+          {
+            "id": 28,
+            "question": "Qual a representação binária do hexadecimal 10?",
+            "correct_answer": "10000",
+            "wrong_answers": ["10", "1010", "1000"]
+          },
+          {
+            "id": 29,
+            "question": "Converta o hexadecimal A5 para binário.",
+            "correct_answer": "10100101",
+            "wrong_answers": ["10101010", "11000101", "10100111"]
+          },
+          {
+            "id": 30,
+            "question": "O hexadecimal 2F corresponde a qual binário?",
+            "correct_answer": "101111",
+            "wrong_answers": ["100111", "110111", "011111"]
+          }
+        ]
+      }
+    ]
+  }

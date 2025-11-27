@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlashCards • Métricas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="nav">
+      <a class="nav-brand" href="index.html">
+        <div class="pill">← Voltar</div>
+        <span>Métricas avançadas</span>
+      </a>
+      <div class="nav-actions">
+        <button class="btn" onclick="window.location.href='flashcard.html'">Continuar estudo</button>
+        <button class="theme-toggle" id="themeToggle"></button>
+      </div>
+    </header>
+
+    <main class="surface grid" style="gap: 32px;">
+      <section>
+        <h2 style="margin-bottom: 18px;">Visão geral</h2>
+        <div class="stats-grid">
+          <div class="metric-card">
+            <h4>Total respondido</h4>
+            <strong id="totalAnswered">0</strong>
+          </div>
+          <div class="metric-card">
+            <h4>Acertos</h4>
+            <strong id="totalCorrect">0</strong>
+          </div>
+          <div class="metric-card">
+            <h4>Erros</h4>
+            <strong id="totalWrong">0</strong>
+          </div>
+          <div class="metric-card">
+            <h4>Tempo médio</h4>
+            <strong id="avgTime">0s</strong>
+          </div>
+          <div class="metric-card">
+            <h4>Streak atual</h4>
+            <strong id="streakCurrent">0🔥</strong>
+          </div>
+          <div class="metric-card">
+            <h4>Melhor streak</h4>
+            <strong id="streakBest">0🔥</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-3">
+        <div class="metric-card" style="grid-column: span 2;">
+          <h4>Porcentagem de acerto por banco</h4>
+          <div id="bankChart" class="metrics-chart"></div>
+        </div>
+        <div class="metric-card">
+          <h4>Banco mais estudado</h4>
+          <strong id="topBank">—</strong>
+          <p style="color: var(--text-muted); margin-top: 6px;" id="topBankDetail"></p>
+        </div>
+      </section>
+
+      <section class="metric-card">
+        <h4>Últimas datas de estudo</h4>
+        <div class="timeline" id="dateTimeline"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    const StorageKeys = {
+      THEME: "fc_theme",
+      METRICS: "fc_metrics",
+      BANKS_CACHE: "fc_banks_cache_v1",
+    };
+
+    class LocalStore {
+      static get(key, fallback = null) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (_) {
+          return fallback;
+        }
+      }
+      static set(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+    }
+
+    class ThemeManager {
+      static init(button) {
+        const preference = LocalStore.get(StorageKeys.THEME, "auto");
+        ThemeManager.apply(preference);
+        ThemeManager.renderButton(button, preference);
+        button.addEventListener("click", () => {
+          const next = ThemeManager.next(ThemeManager.current || preference);
+          ThemeManager.apply(next);
+          ThemeManager.renderButton(button, next);
+          LocalStore.set(StorageKeys.THEME, next);
+          ThemeManager.current = next;
+        });
+        ThemeManager.current = preference;
+      }
+      static apply(mode) {
+        document.documentElement.removeAttribute("data-theme");
+        if (mode !== "auto") {
+          document.documentElement.setAttribute("data-theme", mode);
+        }
+      }
+      static renderButton(button, mode) {
+        const label = mode === "auto" ? "Auto" : mode === "dark" ? "Dark" : "Light";
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.657-7.657-1.414 1.414M7.757 16.243l-1.414 1.414m0-11.314 1.414 1.414m10.486 10.486 1.414 1.414" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>${label}</span>
+        `;
+      }
+      static next(current) {
+        if (current === "auto") return "light";
+        if (current === "light") return "dark";
+        return "auto";
+      }
+    }
+
+    async function loadBanks() {
+      const cache = LocalStore.get(StorageKeys.BANKS_CACHE);
+      if (cache) return cache;
+      const res = await fetch("questoes.json");
+      const data = await res.json();
+      LocalStore.set(StorageKeys.BANKS_CACHE, data.banks);
+      return data.banks;
+    }
+
+    function renderMetrics(banks) {
+      const metrics = LocalStore.get(StorageKeys.METRICS, {
+        totalAnswered: 0,
+        correct: 0,
+        incorrect: 0,
+        avgTimeMs: 0,
+        lastDates: [],
+        streak: { current: 0, best: 0 },
+        bankStats: {},
+      });
+      document.getElementById("totalAnswered").textContent = metrics.totalAnswered;
+      document.getElementById("totalCorrect").textContent = metrics.correct;
+      document.getElementById("totalWrong").textContent = metrics.incorrect;
+      const avgSec = Math.max(0, Math.round(metrics.avgTimeMs / 1000));
+      document.getElementById("avgTime").textContent = `${avgSec || 1}s`;
+      document.getElementById("streakCurrent").textContent = `${metrics.streak.current || 0}🔥`;
+      document.getElementById("streakBest").textContent = `${metrics.streak.best || 0}🔥`;
+
+      const dateTimeline = document.getElementById("dateTimeline");
+      dateTimeline.innerHTML = "";
+      if (!metrics.lastDates.length) {
+        dateTimeline.innerHTML = "<span>Comece um estudo hoje.</span>";
+      } else {
+        metrics.lastDates.forEach((date) => {
+          const tag = document.createElement("span");
+          tag.textContent = new Date(date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+          dateTimeline.appendChild(tag);
+        });
+      }
+
+      renderBankChart(metrics, banks);
+    }
+
+    function renderBankChart(metrics, banks) {
+      const chart = document.getElementById("bankChart");
+      chart.innerHTML = "";
+      let topBank = null;
+      banks.forEach((bank) => {
+        const stat = metrics.bankStats[bank.id] || { answered: 0, correct: 0 };
+        const answered = stat.answered || 0;
+        if (answered > (topBank?.answered || 0)) {
+          topBank = { name: bank.name, answered, correct: stat.correct };
+        }
+        const percent = answered ? Math.round((stat.correct / answered) * 100) : 0;
+        const row = document.createElement("div");
+        row.className = "metrics-chart-row";
+        row.innerHTML = `
+          <span>${bank.name}</span>
+          <div class="progress-bar"><span style="width:${percent}%;"></span></div>
+          <strong>${percent}%</strong>
+        `;
+        chart.appendChild(row);
+      });
+
+      document.getElementById("topBank").textContent = topBank ? topBank.name : "—";
+      document.getElementById("topBankDetail").textContent = topBank
+        ? `${topBank.answered} cards • ${Math.round((topBank.correct / Math.max(topBank.answered, 1)) * 100)}%`
+        : "Ainda sem estudos registrados.";
+    }
+
+    async function init() {
+      ThemeManager.init(document.getElementById("themeToggle"));
+      const banks = await loadBanks();
+      renderMetrics(banks);
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
+

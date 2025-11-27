@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlashCards • Bancos de Estudo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="nav">
+      <div class="nav-brand">
+        <div class="pill">Flashcards</div>
+        <span>Estude em alta performance</span>
+      </div>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema"></button>
+        <a class="btn-outline btn" href="metricas.html">Ver métricas</a>
+      </div>
+    </header>
+
+    <main class="surface">
+      <div class="muted-surface" style="margin-bottom: 24px;">
+        <strong>Escolha um banco</strong>
+        <p style="color: var(--text-muted); margin-top: 4px;">Progresso, porcentagem de acertos e retomada rápida.</p>
+      </div>
+
+      <section id="bankList" class="grid grid-3"></section>
+      <div class="placeholder" id="emptyState" hidden>
+        <p>Carregando bancos…</p>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    const StorageKeys = {
+      THEME: "fc_theme",
+      METRICS: "fc_metrics",
+      BANKS_CACHE: "fc_banks_cache_v2",
+      SELECTION: "fc_selected_bank",
+      PROGRESS: "fc_progress_v1",
+    };
+
+    class LocalStore {
+      static get(key, fallback = null) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (_) {
+          return fallback;
+        }
+      }
+      static set(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+    }
+
+    class ThemeManager {
+      static init(button) {
+        const preference = LocalStore.get(StorageKeys.THEME, "auto");
+        ThemeManager.apply(preference);
+        ThemeManager.renderButton(button, preference);
+        button.addEventListener("click", () => {
+          const next = ThemeManager.next(preference === ThemeManager.current ? ThemeManager.current : preference);
+          ThemeManager.apply(next);
+          ThemeManager.renderButton(button, next);
+          LocalStore.set(StorageKeys.THEME, next);
+          ThemeManager.current = next;
+        });
+        ThemeManager.current = preference;
+      }
+
+      static apply(mode) {
+        document.documentElement.removeAttribute("data-theme");
+        if (mode !== "auto") {
+          document.documentElement.setAttribute("data-theme", mode);
+        }
+      }
+
+      static renderButton(button, mode) {
+        const label = mode === "auto" ? "Auto" : mode === "dark" ? "Dark" : "Light";
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.657-7.657-1.414 1.414M7.757 16.243l-1.414 1.414m0-11.314 1.414 1.414m10.486 10.486 1.414 1.414" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>${label}</span>
+        `;
+      }
+
+      static next(current) {
+        if (current === "auto") return "light";
+        if (current === "light") return "dark";
+        return "auto";
+      }
+    }
+
+    const Metrics = {
+      get() {
+        return LocalStore.get(StorageKeys.METRICS, {
+          totalAnswered: 0,
+          correct: 0,
+          incorrect: 0,
+          avgTimeMs: 0,
+          lastDates: [],
+          streak: { current: 0, best: 0, lastDate: null },
+          bankStats: {},
+        });
+      },
+    };
+
+    const ProgressStore = {
+      get() {
+        return LocalStore.get(StorageKeys.PROGRESS, {});
+      },
+    };
+
+    async function loadBanks() {
+      const cache = LocalStore.get(StorageKeys.BANKS_CACHE);
+      if (cache) return cache;
+      const res = await fetch("questoes.json");
+      const data = await res.json();
+      LocalStore.set(StorageKeys.BANKS_CACHE, data.banks);
+      return data.banks;
+    }
+
+    function renderBanks(banks) {
+      const container = document.getElementById("bankList");
+      const emptyState = document.getElementById("emptyState");
+      container.innerHTML = "";
+      if (!banks.length) {
+        emptyState.hidden = false;
+        emptyState.querySelector("p").textContent = "Nenhum banco encontrado.";
+        return;
+      }
+      emptyState.hidden = true;
+      const metrics = Metrics.get();
+      const progress = ProgressStore.get();
+
+      banks.forEach((bank) => {
+        const bankStats = metrics.bankStats[bank.id] || { answered: 0, correct: 0, incorrect: 0 };
+        const answered = bankStats.answered || 0;
+        const percent = answered ? Math.round((bankStats.correct / answered) * 100) : 0;
+        const prog = progress[bank.id] || { current: 0, total: bank.questions.length };
+        const progressPercent = Math.round(((prog.current || 0) / bank.questions.length) * 100);
+
+        const card = document.createElement("article");
+        card.className = "bank-card surface";
+        card.innerHTML = `
+          <h3>${bank.name}</h3>
+          <p>${bank.questions.length} cards disponíveis</p>
+          <div class="chip-row">
+            <span class="chip">Acertos ${percent}%</span>
+            <span class="chip">Respondidos ${answered}</span>
+            <span class="chip">Progresso ${progressPercent}%</span>
+          </div>
+          <div class="progress-bar" aria-label="Progresso do banco">
+            <span style="width:${progressPercent}%"></span>
+          </div>
+          <div class="card-actions">
+            <button class="btn" data-action="study">Estudar agora</button>
+            <button class="btn btn-outline" data-action="restart">Estudar novamente</button>
+          </div>
+        `;
+        card.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (btn.dataset.action === "restart") {
+              const store = ProgressStore.get();
+              delete store[bank.id];
+              LocalStore.set(StorageKeys.PROGRESS, store);
+              renderBanks(banks);
+              return;
+            }
+            LocalStore.set(StorageKeys.SELECTION, { bankId: bank.id });
+            window.location.href = "flashcard.html";
+          });
+        });
+        container.appendChild(card);
+      });
+    }
+
+    async function init() {
+      ThemeManager.init(document.getElementById("themeToggle"));
+      const banks = await loadBanks();
+      renderBanks(banks);
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
+

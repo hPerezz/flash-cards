@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlashCards • Estudo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="nav">
+      <a class="nav-brand" href="index.html">
+        <div class="pill">← Bancos</div>
+        <span>Estudando</span>
+      </a>
+      <div class="nav-actions">
+        <div class="review-banner" id="reviewBanner">
+          <span>Modo revisão</span>
+          <label class="switch">
+            <input type="checkbox" id="reviewToggle" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <button class="theme-toggle" id="themeToggle"></button>
+      </div>
+    </header>
+
+    <main class="flashcard-wrapper">
+      <section class="flashcard surface" id="flashcard">
+        <div class="flashcard-face front" id="frontFace">
+          <div>
+            <p class="pill" id="bankName"></p>
+            <h2 id="questionText">Carregando…</h2>
+          </div>
+          <div class="answers" id="answers"></div>
+        </div>
+        <div class="flashcard-face back" id="backFace">
+          <div>
+            <p class="pill">Feedback</p>
+            <h2 id="feedbackTitle"></h2>
+          </div>
+          <p id="feedbackSubtitle" style="color: var(--text-muted);"></p>
+        </div>
+      </section>
+
+      <aside class="surface" style="position: sticky; top: 40px;">
+        <div>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Progresso</p>
+          <h3><span id="progressLabel">0 / 0</span></h3>
+          <div class="progress-bar" style="margin: 10px 0 20px;">
+            <span id="progressBar"></span>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom: 24px;">
+          <div class="metric-card">
+            <h4>Acertos</h4>
+            <strong id="statCorrect">0</strong>
+          </div>
+          <div class="metric-card">
+            <h4>Erros</h4>
+            <strong id="statWrong">0</strong>
+          </div>
+          <div class="metric-card">
+            <h4>Tempo médio</h4>
+            <strong id="statTime">0s</strong>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn" id="restartBtn">Estudar novamente</button>
+          <button class="btn btn-outline" id="metricsBtn">Ver métricas</button>
+        </div>
+      </aside>
+    </main>
+
+    <section class="surface empty-state" id="completionState" hidden>
+      <h2 id="completionTitle">Parabéns!</h2>
+      <p id="completionSubtitle">Você concluiu este banco.</p>
+      <div style="margin-top: 20px;">
+        <button class="btn" id="againBtn">Revisar tudo</button>
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    const StorageKeys = {
+      THEME: "fc_theme",
+      METRICS: "fc_metrics",
+      BANKS_CACHE: "fc_banks_cache_v2",
+      SELECTION: "fc_selected_bank",
+      PROGRESS: "fc_progress_v1",
+    };
+
+    class LocalStore {
+      static get(key, fallback = null) {
+        try {
+          const raw = localStorage.getItem(key);
+          return raw ? JSON.parse(raw) : fallback;
+        } catch (_) {
+          return fallback;
+        }
+      }
+      static set(key, value) {
+        localStorage.setItem(key, JSON.stringify(value));
+      }
+    }
+
+    class ThemeManager {
+      static init(button) {
+        const preference = LocalStore.get(StorageKeys.THEME, "auto");
+        ThemeManager.apply(preference);
+        ThemeManager.renderButton(button, preference);
+        button.addEventListener("click", () => {
+          const next = ThemeManager.next(ThemeManager.current || preference);
+          ThemeManager.apply(next);
+          ThemeManager.renderButton(button, next);
+          LocalStore.set(StorageKeys.THEME, next);
+          ThemeManager.current = next;
+        });
+        ThemeManager.current = preference;
+      }
+      static apply(mode) {
+        document.documentElement.removeAttribute("data-theme");
+        if (mode !== "auto") {
+          document.documentElement.setAttribute("data-theme", mode);
+        }
+      }
+      static renderButton(button, mode) {
+        const label = mode === "auto" ? "Auto" : mode === "dark" ? "Dark" : "Light";
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.657-7.657-1.414 1.414M7.757 16.243l-1.414 1.414m0-11.314 1.414 1.414m10.486 10.486 1.414 1.414" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span>${label}</span>
+        `;
+      }
+      static next(current) {
+        if (current === "auto") return "light";
+        if (current === "light") return "dark";
+        return "auto";
+      }
+    }
+
+    class BankRepository {
+      static async getBanks() {
+        const cache = LocalStore.get(StorageKeys.BANKS_CACHE);
+        if (cache) return cache;
+        const res = await fetch("questoes.json");
+        const data = await res.json();
+        LocalStore.set(StorageKeys.BANKS_CACHE, data.banks);
+        return data.banks;
+      }
+      static async getSelectedBank() {
+        const selection = LocalStore.get(StorageKeys.SELECTION);
+        if (!selection) return null;
+        const banks = await BankRepository.getBanks();
+        return banks.find((b) => b.id === selection.bankId) || null;
+      }
+    }
+
+    class MetricsManager {
+      static get() {
+        return LocalStore.get(StorageKeys.METRICS, {
+          totalAnswered: 0,
+          correct: 0,
+          incorrect: 0,
+          avgTimeMs: 0,
+          lastDates: [],
+          streak: { current: 0, best: 0, lastDate: null },
+          bankStats: {},
+        });
+      }
+      static record({ bankId, correct, elapsedMs }) {
+        const metrics = MetricsManager.get();
+        const prevCount = metrics.totalAnswered;
+        metrics.totalAnswered += 1;
+        if (correct) metrics.correct += 1;
+        else metrics.incorrect += 1;
+        metrics.avgTimeMs = Math.round(
+          ((metrics.avgTimeMs * prevCount) + elapsedMs) / Math.max(metrics.totalAnswered, 1)
+        );
+        MetricsManager.updateDates(metrics);
+        MetricsManager.updateStreak(metrics);
+        MetricsManager.updateBank(metrics, bankId, correct);
+        LocalStore.set(StorageKeys.METRICS, metrics);
+      }
+      static updateDates(metrics) {
+        const today = MetricsManager.today();
+        if (metrics.lastDates[0] !== today) {
+          metrics.lastDates.unshift(today);
+          metrics.lastDates = metrics.lastDates.slice(0, 10);
+        }
+      }
+      static updateStreak(metrics) {
+        const today = MetricsManager.today();
+        const last = metrics.streak.lastDate;
+        if (last === today) return;
+        const yesterday = MetricsManager.offsetDate(-1);
+        if (last === yesterday) {
+          metrics.streak.current += 1;
+        } else {
+          metrics.streak.current = 1;
+        }
+        metrics.streak.lastDate = today;
+        metrics.streak.best = Math.max(metrics.streak.best, metrics.streak.current);
+      }
+      static updateBank(metrics, bankId, correct) {
+        const bankStats = metrics.bankStats[bankId] || { answered: 0, correct: 0, incorrect: 0 };
+        bankStats.answered += 1;
+        if (correct) bankStats.correct += 1;
+        else bankStats.incorrect += 1;
+        metrics.bankStats[bankId] = bankStats;
+      }
+      static today() {
+        return new Date().toISOString().slice(0, 10);
+      }
+      static offsetDate(delta) {
+        const d = new Date();
+        d.setDate(d.getDate() + delta);
+        return d.toISOString().slice(0, 10);
+      }
+    }
+
+    class ProgressManager {
+      static getAll() {
+        return LocalStore.get(StorageKeys.PROGRESS, {});
+      }
+      static get(bankId) {
+        const all = ProgressManager.getAll();
+        return all[bankId] || { current: 0, correct: 0, wrong: 0, wrongIds: [] };
+      }
+      static save(bankId, data) {
+        const all = ProgressManager.getAll();
+        all[bankId] = data;
+        LocalStore.set(StorageKeys.PROGRESS, all);
+      }
+      static reset(bankId) {
+        const all = ProgressManager.getAll();
+        delete all[bankId];
+        LocalStore.set(StorageKeys.PROGRESS, all);
+      }
+    }
+
+    const state = {
+      bank: null,
+      questions: [],
+      currentIndex: 0,
+      reviewMode: false,
+      timerStart: Date.now(),
+      answeredCount: 0,
+      correctCount: 0,
+      wrongCount: 0,
+    };
+
+    async function init() {
+      ThemeManager.init(document.getElementById("themeToggle"));
+      const bank = await BankRepository.getSelectedBank();
+      if (!bank) {
+        window.location.href = "index.html";
+        return;
+      }
+      state.bank = bank;
+      document.getElementById("bankName").textContent = bank.name;
+
+      setupListeners();
+      loadQuestions();
+    }
+
+    function setupListeners() {
+      document.getElementById("reviewToggle").addEventListener("change", (e) => {
+        state.reviewMode = e.target.checked;
+        loadQuestions();
+      });
+      document.getElementById("restartBtn").addEventListener("click", () => {
+        ProgressManager.reset(state.bank.id);
+        state.reviewMode = false;
+        document.getElementById("reviewToggle").checked = false;
+        loadQuestions();
+      });
+      document.getElementById("againBtn").addEventListener("click", () => {
+        ProgressManager.reset(state.bank.id);
+        state.reviewMode = false;
+        document.getElementById("reviewToggle").checked = false;
+        document.getElementById("completionState").hidden = true;
+        document.querySelector(".flashcard-wrapper").style.display = "grid";
+        loadQuestions();
+      });
+      document.getElementById("metricsBtn").addEventListener("click", () => {
+        window.location.href = "metricas.html";
+      });
+    }
+
+    function loadQuestions() {
+      const progress = ProgressManager.get(state.bank.id);
+      const wrongIds = progress.wrongIds || [];
+      if (state.reviewMode && wrongIds.length === 0) {
+        state.reviewMode = false;
+        document.getElementById("reviewToggle").checked = false;
+      }
+
+      state.questions = state.reviewMode
+        ? state.bank.questions.filter((q) => wrongIds.includes(q.id))
+        : shuffle([...state.bank.questions]);
+
+      state.currentIndex = 0;
+      state.answeredCount = 0;
+      state.correctCount = 0;
+      state.wrongCount = 0;
+
+      updateReviewState(wrongIds.length > 0);
+
+      if (!state.questions.length) {
+        showEmpty("Nenhuma questão para revisar. Complete o banco primeiro.");
+        return;
+      }
+      document.querySelector(".flashcard-wrapper").style.display = "grid";
+      document.getElementById("completionState").hidden = true;
+      renderQuestion();
+      updateStatsDisplay();
+    }
+
+    function showEmpty(message) {
+      document.querySelector(".flashcard-wrapper").style.display = "none";
+      const completion = document.getElementById("completionState");
+      completion.hidden = false;
+      document.getElementById("completionTitle").textContent = "Tudo pronto!";
+      document.getElementById("completionSubtitle").textContent = message;
+    }
+
+    function renderQuestion() {
+      if (state.currentIndex >= state.questions.length) {
+        finishSession();
+        return;
+      }
+      const question = state.questions[state.currentIndex];
+      document.getElementById("questionText").textContent = question.question;
+      document.getElementById("flashcard").classList.remove("flipped");
+      const answers = shuffle([question.correct_answer, ...question.wrong_answers]);
+      const answersContainer = document.getElementById("answers");
+      answersContainer.innerHTML = "";
+      answers.forEach((answer) => {
+        const btn = document.createElement("button");
+        btn.className = "answer-btn";
+        btn.textContent = answer;
+        btn.addEventListener("click", () => handleAnswer(question, answer, btn));
+        answersContainer.appendChild(btn);
+      });
+      state.timerStart = performance.now();
+      updateProgress();
+    }
+
+    function handleAnswer(question, answer, button) {
+      const elapsed = performance.now() - state.timerStart;
+      const isCorrect = answer === question.correct_answer;
+      lockAnswers(question.correct_answer, answer);
+      MetricsManager.record({ bankId: state.bank.id, correct: isCorrect, elapsedMs: elapsed });
+      persistProgress(question.id, isCorrect);
+      state.answeredCount += 1;
+      if (isCorrect) state.correctCount += 1;
+      else state.wrongCount += 1;
+      updateStatsDisplay();
+      showFeedback(isCorrect, question.correct_answer);
+      setTimeout(() => {
+        document.getElementById("flashcard").classList.remove("flipped");
+        state.currentIndex += 1;
+        renderQuestion();
+      }, 1100);
+    }
+
+    function lockAnswers(correctAnswer, chosen) {
+      const buttons = document.querySelectorAll(".answer-btn");
+      buttons.forEach((btn) => {
+        btn.disabled = true;
+        if (btn.textContent === correctAnswer) {
+          btn.classList.add("correct");
+        } else if (btn.textContent === chosen) {
+          btn.classList.add("wrong");
+        }
+      });
+    }
+
+    function showFeedback(isCorrect, correctAnswer) {
+      const flap = document.getElementById("flashcard");
+      document.getElementById("feedbackTitle").textContent = isCorrect ? "Resposta correta!" : "Quase lá…";
+      document.getElementById("feedbackSubtitle").textContent = isCorrect
+        ? "Continue nesse ritmo, você está voando."
+        : `A resposta correta é: ${correctAnswer}`;
+      flap.classList.add("flipped");
+    }
+
+    function persistProgress(questionId, isCorrect) {
+      const data = ProgressManager.get(state.bank.id);
+      data.current = state.currentIndex + 1;
+      data.answerCount = (data.answerCount || 0) + 1;
+      data.correct = (data.correct || 0) + (isCorrect ? 1 : 0);
+      data.wrong = (data.wrong || 0) + (!isCorrect ? 1 : 0);
+      data.wrongIds = data.wrongIds || [];
+      if (isCorrect) {
+        data.wrongIds = data.wrongIds.filter((id) => id !== questionId);
+      } else if (!data.wrongIds.includes(questionId)) {
+        data.wrongIds.push(questionId);
+      }
+      data.lastAccuracy = data.answerCount ? Math.round((data.correct / data.answerCount) * 100) : 0;
+      data.total = state.bank.questions.length;
+      ProgressManager.save(state.bank.id, data);
+      updateReviewState(data.wrongIds.length > 0);
+    }
+
+    function updateStatsDisplay() {
+      document.getElementById("statCorrect").textContent = state.correctCount;
+      document.getElementById("statWrong").textContent = state.wrongCount;
+      const metrics = MetricsManager.get();
+      document.getElementById("statTime").textContent = Math.max(1, Math.round(metrics.avgTimeMs / 1000)) + "s";
+    }
+
+    function updateProgress() {
+      const label = `${state.currentIndex + 1} / ${state.questions.length}`;
+      document.getElementById("progressLabel").textContent = label;
+      const percent = Math.round(((state.currentIndex) / state.questions.length) * 100);
+      document.getElementById("progressBar").style.width = `${percent}%`;
+    }
+
+    function updateReviewState(hasWrong) {
+      const banner = document.getElementById("reviewBanner");
+      const toggle = document.getElementById("reviewToggle");
+      const text = banner.querySelector("span");
+      toggle.disabled = !hasWrong;
+      banner.style.opacity = hasWrong ? 1 : 0.45;
+      text.textContent = hasWrong ? "Modo revisão" : "Sem erros recentes";
+      if (!hasWrong) {
+        state.reviewMode = false;
+        toggle.checked = false;
+      }
+    }
+
+    function finishSession() {
+      document.querySelector(".flashcard-wrapper").style.display = "none";
+      const completion = document.getElementById("completionState");
+      completion.hidden = false;
+      if (state.questions.length) {
+        document.getElementById("progressLabel").textContent = `${state.questions.length} / ${state.questions.length}`;
+        document.getElementById("progressBar").style.width = "100%";
+      }
+      const accuracy = state.correctCount && (Math.round((state.correctCount / (state.correctCount + state.wrongCount)) * 100));
+      document.getElementById("completionTitle").textContent = accuracy === 100 ? "Perfeito! 🔥" : "Bom trabalho!";
+      document.getElementById("completionSubtitle").textContent =
+        accuracy === 100 ? "Você acertou tudo. Continue mantendo a streak!" : "Aperte revisar para reforçar o aprendizado.";
+      if (accuracy === 100) {
+        fireConfetti();
+      }
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function fireConfetti() {
+      for (let i = 0; i < 40; i += 1) {
+        const piece = document.createElement("span");
+        piece.className = "confetti";
+        piece.style.setProperty("--x", `${(Math.random() - 0.5) * 200}px`);
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.background = `hsl(${Math.random() * 360}, 85%, 60%)`;
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 1600);
+      }
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
+
